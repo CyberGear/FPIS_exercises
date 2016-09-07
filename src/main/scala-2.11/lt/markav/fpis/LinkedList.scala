@@ -10,6 +10,8 @@ case class Cons[+A](head: A, tail: LinkedList[A]) extends LinkedList[A]
 
 object LinkedList {
 
+  def lenght[A](list: LinkedList[A]): Int = foldRight(list, 0)((_, b) => b + 1)
+
   def sum(ints: LinkedList[Int]): Int = ints match {
     case Nil => 0
     case Cons(x, xs) => x + sum(xs)
@@ -19,6 +21,23 @@ object LinkedList {
     case Nil => 1.0
     case Cons(0.0, _) => 0.0
     case Cons(x, xs) => x * product(xs)
+  }
+
+  def product2(list: LinkedList[Double]): Double = foldRight(list, 1.0)( { _ * _ } )
+
+  def foldRight[A, B](list: LinkedList[A], b: B)(f: (A, B) => B): B = list match {
+    case Nil => b
+    case Cons(x, xs) => f(x, foldRight(xs, b)(f))
+  }
+
+  def foldLeft[A, B](list: LinkedList[A], b: B)(f: (B, A) => B): B = {
+    @tailrec
+    def loop(list: LinkedList[A], b: B): B = list match {
+      case Nil => b
+      case Cons(x, xs) => loop(xs, f(b, x))
+    }
+
+    loop(list, b)
   }
 
   def apply[A](as: A*): LinkedList[A] =
